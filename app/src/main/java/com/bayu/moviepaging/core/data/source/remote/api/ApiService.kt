@@ -1,5 +1,6 @@
 package com.bayu.moviepaging.core.data.source.remote.api
 
+import com.bayu.moviepaging.BuildConfig
 import com.bayu.moviepaging.core.data.source.remote.api.response.MediasResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,7 +12,7 @@ interface ApiService {
     suspend fun getTrending(
         @Path("type") type: String = "all",
         @Path("time") time: String = "day",
-        @Query("api_key") apiKey: String = "",
+        @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
         @Query("page") page: Int,
     ): MediasResponse
 
