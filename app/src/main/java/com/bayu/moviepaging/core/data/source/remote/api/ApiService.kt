@@ -10,8 +10,8 @@ interface ApiService {
 
     @GET("trending/{type}/{time}")
     suspend fun getTrending(
-        @Path("type") type: String = "all",
-        @Path("time") time: String = "day",
+        @Path("type") type: String,
+        @Path("time") time: String,
         @Query("api_key") apiKey: String = BuildConfig.TMDB_API_KEY,
         @Query("page") page: Int,
     ): MediasResponse

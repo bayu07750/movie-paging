@@ -4,6 +4,8 @@ import com.bayu.moviepaging.core.data.source.remote.api.ApiResponse
 import com.bayu.moviepaging.core.data.source.remote.api.ApiService
 import com.bayu.moviepaging.core.data.source.remote.api.response.MediaResponse
 import com.bayu.moviepaging.core.di.IODispatcher
+import com.bayu.moviepaging.core.enums.MediaTime
+import com.bayu.moviepaging.core.enums.MediaType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,13 +21,17 @@ class RemoteDataSource @Inject constructor(
 ) {
 
     fun getTrending(
-        type: String,
-        time: String,
+        mediaType: MediaType,
+        mediaTime: MediaTime,
         page: Int
     ): Flow<ApiResponse<List<MediaResponse>>> {
         return flow {
             try {
-                val response = apiService.getTrending(type = type, time = time, page = page)
+                val response = apiService.getTrending(
+                    type = mediaType.type.lowercase(),
+                    time = mediaTime.time,
+                    page = page
+                )
                 if (response.results?.isNotEmpty() == true) {
                     emit(ApiResponse.Success(response.results))
                 } else {
