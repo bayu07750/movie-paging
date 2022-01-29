@@ -18,7 +18,7 @@ class RemoteDataSource @Inject constructor(
     @IODispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
 
-    fun getGreeting(
+    fun getTrending(
         type: String,
         time: String,
         page: Int
