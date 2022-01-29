@@ -5,6 +5,6 @@ enum class MediaTime(val time: String) {
     WEEK("week");
 
     companion object {
-        val DEFAULT = DAY
+        val DEFAULT = WEEK
     }
 }
