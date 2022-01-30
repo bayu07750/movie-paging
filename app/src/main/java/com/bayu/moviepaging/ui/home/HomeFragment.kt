@@ -1,22 +1,23 @@
 package com.bayu.moviepaging.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bayu.moviepaging.R
+import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val spinnerItems = listOf("All", "Movie", "Tv", "Person")
+    private val spinnerItems = listOf(MediaType.ALL, MediaType.MOVIE, MediaType.TV).map { it.type }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,10 +34,14 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun init() {
-        with(binding.spinner) {
-            val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.layout_spinner, spinnerItems)
-            adapter = spinnerAdapter
-            onItemSelectedListener = this@HomeFragment
+        val arrayAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.dropdown_item,
+            spinnerItems
+        )
+        with(binding.autoCompleteTextView) {
+            setAdapter(arrayAdapter)
+            onItemClickListener = this@HomeFragment
         }
     }
 
@@ -45,11 +50,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemSelectedListener {
         _binding = null
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        Toast.makeText(requireContext(), spinnerItems[position], Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-
+    override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+        val mediaType = MediaType.valueOf(spinnerItems[position].uppercase())
+        Log.d("TAG", "onItemClick: $mediaType")
     }
 }
