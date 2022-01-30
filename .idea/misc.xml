@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/fragment_explore.xml" value="0.19722222222222222" />
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.19722222222222222" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.19722222222222222" />
+        <entry key="app/src/main/res/layout/item_media_home.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/item_pager_home.xml" value="0.19722222222222222" />
         <entry key="app/src/main/res/layout/item_type_spinner.xml" value="0.19722222222222222" />
         <entry key="app/src/main/res/layout/layout_spinner.xml" value="0.19722222222222222" />

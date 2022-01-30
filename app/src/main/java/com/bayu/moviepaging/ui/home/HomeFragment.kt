@@ -1,23 +1,33 @@
 package com.bayu.moviepaging.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.bayu.moviepaging.R
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlin.math.abs
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val spinnerItems = listOf(MediaType.ALL, MediaType.MOVIE, MediaType.TV).map { it.type }
+    private val viewModel: HomeViewModel by viewModels()
+    private val spinnerItems = listOf(MediaType.ALL.type, MediaType.MOVIE.type, MediaType.TV.type)
+
+    private lateinit var homePagingAdapter: HomePagingAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,9 +41,23 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         init()
+        observe()
     }
 
-    private fun init() {
+    private fun observe() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.trending.collectLatest {
+                homePagingAdapter.submitData(it)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupAutoCompleteTextView()
+    }
+
+    private fun setupAutoCompleteTextView() {
         val arrayAdapter = ArrayAdapter(
             requireContext(),
             R.layout.dropdown_item,
@@ -45,13 +69,42 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         }
     }
 
+    private fun init() {
+        setupViewPager2()
+    }
+
+    private fun setupViewPager2() {
+        homePagingAdapter = HomePagingAdapter()
+        with(binding.viewPager) {
+            adapter = homePagingAdapter
+            offscreenPageLimit = 1
+            val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
+            val currentItemHorizontalMarginPx =
+                resources.getDimension(R.dimen.viewpager_current_item_horizontal_margin)
+            val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
+            val pageTransformer = ViewPager2.PageTransformer { page: View, position: Float ->
+                page.translationX = -pageTranslationX * position
+                page.scaleY = 1 - (0.25f * abs(position))
+            }
+            setPageTransformer(pageTransformer)
+
+            val itemDecoration = HorizontalMarginItemDecoration(
+                context,
+                R.dimen.viewpager_current_item_horizontal_margin,
+                R.dimen.viewpager_current_item_vertical_margin,
+            )
+            addItemDecoration(itemDecoration)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
     override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+        binding.viewPager.setCurrentItem(0, true)
         val mediaType = MediaType.valueOf(spinnerItems[position].uppercase())
-        Log.d("TAG", "onItemClick: $mediaType")
+        viewModel.setMediaType(mediaType)
     }
 }

@@ -3,6 +3,7 @@ package com.bayu.moviepaging.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.bayu.moviepaging.core.enums.MediaTime
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.domain.model.Media
@@ -22,15 +23,11 @@ class HomeViewModel @Inject constructor(
     private val _mediaTime = MutableStateFlow(MediaTime.DEFAULT)
     val mediaTime: StateFlow<MediaTime> = _mediaTime
 
-    val trending: StateFlow<PagingData<Media>> = combine(_mediaType, _mediaTime) { a, b ->
+    val trending: Flow<PagingData<Media>> = combine(_mediaType, _mediaTime) { a, b ->
         Pair(a, b)
     }.flatMapLatest { (type, time) ->
         useCase.trending(type, time)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = PagingData.empty(),
-    )
+    }.cachedIn(viewModelScope)
 
     fun setMediaType(mediaType: MediaType) {
         this._mediaType.value = mediaType
