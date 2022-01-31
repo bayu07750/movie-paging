@@ -24,7 +24,7 @@ class TrendingRepositoryImp @Inject constructor(
     override fun trending(mediaType: MediaType, mediaTime: MediaTime): Flow<PagingData<Media>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
+                pageSize = 10,
             )
         ) {
             TrendingPagingSource(remote, mediaType, mediaTime)
