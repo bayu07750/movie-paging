@@ -6,14 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.viewpager2.widget.ViewPager2
 import com.bayu.moviepaging.R
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.core.ui.HorizontalMarginItemDecoration
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
+import com.bayu.moviepaging.databinding.LoadStatePagingFooterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -43,6 +46,13 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
 
         init()
         observe()
+        actions()
+    }
+
+    private fun actions() {
+        binding.btnRetry.setOnClickListener {
+            homePagingAdapter.retry()
+        }
     }
 
     private fun observe() {
@@ -80,6 +90,17 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         }
         homePagingAdapter = HomePagingAdapter()
         homePagingAdapter.withLoadStateHeaderAndFooter(loadStateFooter, loadStateFooter)
+
+        homePagingAdapter.addLoadStateListener { loadState ->
+            val currentState = loadState.source.refresh
+            with(binding) {
+                progressBar.isVisible = currentState is LoadState.Loading
+                viewPager.isVisible = currentState is LoadState.NotLoading
+                btnRetry.isVisible = currentState is LoadState.Error
+                tvMessage.isVisible = currentState is LoadState.Error
+                tvMessage.text = getString(R.string.message_error)
+            }
+        }
 
         val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
         val currentItemHorizontalMarginPx =
