@@ -10,13 +10,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.viewpager2.widget.ViewPager2
 import com.bayu.moviepaging.R
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.core.ui.HorizontalMarginItemDecoration
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
-import com.bayu.moviepaging.databinding.LoadStatePagingFooterBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,6 +52,10 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun actions() {
         binding.btnRetry.setOnClickListener {
             homePagingAdapter.retry()
+        }
+
+        binding.btnSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_home_to_searchFragment)
         }
     }
 
