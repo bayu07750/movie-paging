@@ -1,4 +1,4 @@
-package com.bayu.moviepaging.ui.home
+package com.bayu.moviepaging.core.ui
 
 import android.content.Context
 import android.graphics.Rect

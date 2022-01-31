@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.bayu.moviepaging.R
 import com.bayu.moviepaging.core.enums.MediaType
+import com.bayu.moviepaging.core.ui.HorizontalMarginItemDecoration
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -75,24 +76,27 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private fun setupViewPager2() {
         homePagingAdapter = HomePagingAdapter()
+
+        val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
+        val currentItemHorizontalMarginPx =
+            resources.getDimension(R.dimen.viewpager_current_item_horizontal_margin)
+        val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
+
+        val pageTransformer = ViewPager2.PageTransformer { page, position ->
+            page.translationX = -pageTranslationX + position
+            page.scaleY = 1 - (0.25F * abs(position))
+        }
+
+        val itemDecoration = HorizontalMarginItemDecoration(
+            requireContext(),
+            R.dimen.viewpager_current_item_horizontal_margin,
+            R.dimen.viewpager_current_item_vertical_margin,
+        )
+
         with(binding.viewPager) {
             adapter = homePagingAdapter
             offscreenPageLimit = 1
-            val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
-            val currentItemHorizontalMarginPx =
-                resources.getDimension(R.dimen.viewpager_current_item_horizontal_margin)
-            val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
-            val pageTransformer = ViewPager2.PageTransformer { page: View, position: Float ->
-                page.translationX = -pageTranslationX * position
-                page.scaleY = 1 - (0.25f * abs(position))
-            }
             setPageTransformer(pageTransformer)
-
-            val itemDecoration = HorizontalMarginItemDecoration(
-                context,
-                R.dimen.viewpager_current_item_horizontal_margin,
-                R.dimen.viewpager_current_item_vertical_margin,
-            )
             addItemDecoration(itemDecoration)
         }
     }
