@@ -75,7 +75,11 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
     }
 
     private fun setupViewPager2() {
+        val loadStateFooter = HomeLoadStateAdapter {
+            homePagingAdapter.retry()
+        }
         homePagingAdapter = HomePagingAdapter()
+        homePagingAdapter.withLoadStateHeaderAndFooter(loadStateFooter, loadStateFooter)
 
         val nextItemVisiblePx = resources.getDimension(R.dimen.viewpager_next_item_visible)
         val currentItemHorizontalMarginPx =
