@@ -83,7 +83,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         val pageTranslationX = nextItemVisiblePx + currentItemHorizontalMarginPx
 
         val pageTransformer = ViewPager2.PageTransformer { page, position ->
-            page.translationX = -pageTranslationX + position
+            page.translationX = -pageTranslationX * position
             page.scaleY = 1 - (0.25F * abs(position))
         }
 
