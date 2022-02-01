@@ -6,7 +6,7 @@ import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.domain.model.Media
 import kotlinx.coroutines.flow.Flow
 
-interface TrendingUseCase {
+interface TmdbUseCase {
 
     fun trending(mediaType: MediaType, mediaTime: MediaTime): Flow<PagingData<Media>>
 

@@ -7,14 +7,14 @@ import androidx.paging.cachedIn
 import com.bayu.moviepaging.core.enums.MediaTime
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.domain.model.Media
-import com.bayu.moviepaging.domain.usecase.media.TrendingUseCase
+import com.bayu.moviepaging.domain.usecase.media.TmdbUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val useCase: TrendingUseCase
+    private val useCase: TmdbUseCase
 ) : ViewModel() {
 
     private val _mediaType = MutableStateFlow(MediaType.DEFAULT)

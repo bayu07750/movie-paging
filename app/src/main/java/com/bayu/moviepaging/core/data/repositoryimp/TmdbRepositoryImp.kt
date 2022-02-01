@@ -10,16 +10,16 @@ import com.bayu.moviepaging.core.datamappers.MediaDataMapper.mapResponseToDomain
 import com.bayu.moviepaging.core.enums.MediaTime
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.domain.model.Media
-import com.bayu.moviepaging.domain.repository.TrendingRepository
+import com.bayu.moviepaging.domain.repository.TmdbRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TrendingRepositoryImp @Inject constructor(
+class TmdbRepositoryImp @Inject constructor(
     private val remote: RemoteDataSource
-) : TrendingRepository {
+) : TmdbRepository {
 
     override fun trending(mediaType: MediaType, mediaTime: MediaTime): Flow<PagingData<Media>> {
         return Pager(
