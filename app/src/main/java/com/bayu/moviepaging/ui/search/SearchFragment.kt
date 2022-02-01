@@ -1,4 +1,4 @@
-package com.bayu.moviepaging.ui
+package com.bayu.moviepaging.ui.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
