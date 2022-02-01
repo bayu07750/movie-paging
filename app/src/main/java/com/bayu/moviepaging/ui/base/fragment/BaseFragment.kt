@@ -1,4 +1,4 @@
-package com.bayu.moviepaging.ui.base
+package com.bayu.moviepaging.ui.base.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

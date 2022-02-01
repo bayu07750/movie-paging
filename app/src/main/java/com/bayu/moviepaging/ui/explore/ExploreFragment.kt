@@ -1,29 +1,15 @@
 package com.bayu.moviepaging.ui.explore
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.bayu.moviepaging.R
 import com.bayu.moviepaging.databinding.FragmentExploreBinding
+import com.bayu.moviepaging.ui.base.fragment.BaseFragment
 
-class ExploreFragment : Fragment() {
+class ExploreFragment : BaseFragment<FragmentExploreBinding>() {
 
-    private var _binding: FragmentExploreBinding? = null
-    private val binding get() = _binding!!
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentExploreBinding =
+        { inflater, parent, attach ->
+            FragmentExploreBinding.inflate(inflater, parent, attach)
+        }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentExploreBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

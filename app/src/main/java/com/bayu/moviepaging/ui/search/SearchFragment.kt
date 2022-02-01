@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bayu.moviepaging.core.data.vo.Resource
 import com.bayu.moviepaging.databinding.FragmentSearchBinding
 import com.bayu.moviepaging.domain.model.Keyword
-import com.bayu.moviepaging.ui.base.BaseFragment
+import com.bayu.moviepaging.ui.base.fragment.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

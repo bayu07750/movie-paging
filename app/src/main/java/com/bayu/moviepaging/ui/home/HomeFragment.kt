@@ -1,13 +1,11 @@
 package com.bayu.moviepaging.ui.home
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,39 +15,26 @@ import com.bayu.moviepaging.R
 import com.bayu.moviepaging.core.enums.MediaType
 import com.bayu.moviepaging.core.ui.HorizontalMarginItemDecoration
 import com.bayu.moviepaging.databinding.FragmentHomeBinding
+import com.bayu.moviepaging.ui.base.fragment.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(), AdapterView.OnItemClickListener {
 
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentHomeBinding =
+        { inflater, parent, attach ->
+            FragmentHomeBinding.inflate(inflater, parent, attach)
+        }
 
     private val viewModel: HomeViewModel by viewModels()
     private val spinnerItems = listOf(MediaType.ALL.type, MediaType.MOVIE.type, MediaType.TV.type)
 
     private lateinit var homePagingAdapter: HomePagingAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        init()
-        observe()
-        actions()
-    }
-
-    private fun actions() {
+    override fun actions() {
         binding.btnRetry.setOnClickListener {
             homePagingAdapter.retry()
         }
@@ -59,8 +44,8 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         }
     }
 
-    private fun observe() {
-        viewLifecycleOwner.lifecycleScope.launch {
+    override fun observe() {
+        lifecycleScope.launch {
             viewModel.trending.collectLatest {
                 homePagingAdapter.submitData(it)
             }
@@ -84,7 +69,7 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
         }
     }
 
-    private fun init() {
+    override fun initView() {
         setupViewPager2()
     }
 
@@ -128,11 +113,6 @@ class HomeFragment : Fragment(), AdapterView.OnItemClickListener {
             setPageTransformer(pageTransformer)
             addItemDecoration(itemDecoration)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onItemClick(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
