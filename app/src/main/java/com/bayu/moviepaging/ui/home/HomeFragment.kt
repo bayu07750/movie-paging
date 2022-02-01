@@ -40,7 +40,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), AdapterView.OnItemClic
         }
 
         binding.btnSearch.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_home_to_searchFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
         }
     }
 
