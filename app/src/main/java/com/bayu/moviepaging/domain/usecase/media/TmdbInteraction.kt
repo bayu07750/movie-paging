@@ -1,8 +1,10 @@
 package com.bayu.moviepaging.domain.usecase.media
 
 import androidx.paging.PagingData
+import com.bayu.moviepaging.core.data.vo.Resource
 import com.bayu.moviepaging.core.enums.MediaTime
 import com.bayu.moviepaging.core.enums.MediaType
+import com.bayu.moviepaging.domain.model.Keyword
 import com.bayu.moviepaging.domain.model.Media
 import com.bayu.moviepaging.domain.repository.TmdbRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +18,10 @@ class TmdbInteraction @Inject constructor(
 
     override fun trending(mediaType: MediaType, mediaTime: MediaTime): Flow<PagingData<Media>> {
         return tmdbRepository.trending(mediaType, mediaTime)
+    }
+
+    override fun keywords(query: String): Flow<Resource<List<Keyword>>> {
+        return tmdbRepository.keywords(query)
     }
 
 }

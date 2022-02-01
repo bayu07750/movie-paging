@@ -6,14 +6,12 @@ import com.bayu.moviepaging.core.data.vo.Resource
 import com.bayu.moviepaging.domain.model.Keyword
 import com.bayu.moviepaging.domain.usecase.media.TmdbUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel(
+class SearchViewModel @Inject constructor(
     private val useCase: TmdbUseCase
 ) : ViewModel() {
 
@@ -21,7 +19,7 @@ class SearchViewModel(
 
     private val _keywords: MutableStateFlow<Resource<List<Keyword>>> =
         MutableStateFlow(Resource.Loading())
-    private val keyword: StateFlow<Resource<List<Keyword>>> = _keywords
+    val keywords: StateFlow<Resource<List<Keyword>>> = _keywords
 
     init {
         requestKeyword()
@@ -30,7 +28,13 @@ class SearchViewModel(
     fun requestKeyword() {
         viewModelScope.launch {
             _query
-                .flatMapConcat { useCase.keywords(it) }
+                .flatMapConcat {
+                    if (it.isNotEmpty()) {
+                        return@flatMapConcat useCase.keywords(it)
+                    } else {
+                        flow { }
+                    }
+                }
                 .collect {
                     _keywords.value = it
                 }

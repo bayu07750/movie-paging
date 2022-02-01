@@ -1,48 +1,95 @@
 package com.bayu.moviepaging.ui.search
 
-import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bayu.moviepaging.core.data.vo.Resource
 import com.bayu.moviepaging.databinding.FragmentSearchBinding
+import com.bayu.moviepaging.domain.model.Keyword
+import com.bayu.moviepaging.ui.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class SearchFragment : Fragment() {
+@AndroidEntryPoint
+class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
-    private var _binding: FragmentSearchBinding? = null
-    private val binding get() = _binding!!
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentSearchBinding =
+        { inflater, parent, attachParent ->
+            FragmentSearchBinding.inflate(inflater, parent, attachParent)
+        }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val viewModel: SearchViewModel by viewModels()
+    private val handler = Handler(Looper.getMainLooper())
+    private var querySearch = ""
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private lateinit var searchAdapter: SearchAdapter
+    private lateinit var runnable: Runnable
 
-        init()
-        observe()
-        actions()
-    }
-
-    private fun actions() {
-        binding.btnBack.setOnClickListener {
-            findNavController().navigateUp()
+    override fun initView() {
+        super.initView()
+        searchAdapter = SearchAdapter(
+            onClickItem = onClickItem,
+            onClickBtnUseKeyword = onCLickBtnUseKeyword,
+        )
+        setupRecyclerView()
+        runnable = Runnable {
+            viewModel.setQuery(querySearch)
         }
     }
 
-    private fun observe() {
+    private fun setupRecyclerView() {
+        with(binding.recyclerView) {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = searchAdapter
+        }
     }
 
-    private fun init() {
+    override fun observe() {
+        super.observe()
+        lifecycleScope.launch {
+            repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                viewModel.keywords.collectLatest { result ->
+                    when (result) {
+                        is Resource.Error -> {} // TODO
+                        is Resource.Loading -> {}// TODO
+                        is Resource.Success -> {
+                            searchAdapter.submitList(result.data)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun actions() {
+        super.actions()
+        with(binding) {
+            btnBack.setOnClickListener { findNavController().navigateUp() }
+
+            editSearch.addTextChangedListener {
+                querySearch = it?.toString().orEmpty()
+                handler.removeCallbacks(runnable)
+                handler.postDelayed(runnable, 600)
+            }
+        }
+    }
+
+    private val onClickItem: (Keyword) -> Unit = {
+        Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+    }
+
+    private val onCLickBtnUseKeyword: (Keyword) -> Unit = {
+        // TODO
     }
 }
