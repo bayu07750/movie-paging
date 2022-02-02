@@ -4,7 +4,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -86,7 +85,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private val onClickItem: (Keyword) -> Unit = {
-        Toast.makeText(requireContext(), it.name, Toast.LENGTH_SHORT).show()
+        val directions = SearchFragmentDirections.actionSearchFragmentToResultFragment(it.name)
+        findNavController().navigate(directions)
     }
 
     private val onCLickBtnUseKeyword: (Keyword) -> Unit = {
