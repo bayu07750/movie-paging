@@ -90,6 +90,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private val onCLickBtnUseKeyword: (Keyword) -> Unit = {
-        // TODO
+        binding.editSearch.setText(it.name)
     }
 }
