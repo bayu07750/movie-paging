@@ -2,6 +2,7 @@ package com.bayu.moviepaging.ui.search.result
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bayu.moviepaging.databinding.FragmentResultBinding
@@ -15,6 +16,7 @@ class ResultFragment : BaseFragment<FragmentResultBinding>() {
         }
 
     private val navArgs: ResultFragmentArgs by navArgs()
+    private val viewModel: ResultViewModel by viewModels()
 
     override fun initView() {
         super.initView()
@@ -23,6 +25,7 @@ class ResultFragment : BaseFragment<FragmentResultBinding>() {
 
         if (searchQuery.isNotEmpty()) {
             binding.edtQuery.setText(searchQuery)
+            viewModel.setSearchQuery(searchQuery)
         } else {
             findNavController().navigateUp()
         }
